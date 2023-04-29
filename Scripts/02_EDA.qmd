@@ -1,0 +1,223 @@
+---
+title: "EDA"
+format: html
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+## Setup
+
+```{r}
+#| output: false
+
+library(data.table)
+library(tidyverse)
+library(magrittr)
+
+library(here) # avoid having to change between . and .. when running interactively vs knitting
+library(DataExplorer)
+library(tidymodels)
+library(vip)
+library(gridExtra)
+library(sjmisc) # for rotate_df
+```
+
+```{r load_data}
+#| cache: true
+
+load(here("Output/01_output.RData"))
+```
+
+Use only training data for the EDA and set switch determining whether to do EDA for original or synthetic data. 
+
+```{r}
+switch_original <- FALSE
+
+if (switch_original) {
+  
+  df_train <- output_01$df_train_org
+  
+} else {
+  
+  df_train <- training(output_01$data_split)
+  
+}
+```
+
+```{r}
+summary(df_train)
+```
+
+```{r}
+df_train %>% 
+  count(prognosis)
+```
+
+
+A very straight forward data set. Fortunately, no missing values. The classes are fairly balanced as well. 
+
+## Marginal Distributions
+
+Only indicator predictors (and a lot of them), so we will refrain form plotting. 
+
+### Distributions by target
+
+No plotting for the same reason as above. Instead, we will do a count by prognosis:
+
+```{r}
+df_train %>% 
+  select(
+    !c(id, original)
+  ) %>% 
+  group_by(
+    prognosis
+  ) %>% 
+  summarise(
+    across(where(is.integer), sum)
+  ) %>% rotate_df(cn = TRUE)
+```
+
+## Correlation
+
+```{r}
+#| include: false
+
+corr_simple <- function(data, sig = 0.5){
+
+  df_cor <- 
+    data %>% 
+    mutate_if(is.character, as.factor)
+  
+  df_cor %<>% 
+    mutate_if(is.factor, as.integer)
+  
+  corr <- cor(df_cor)
+  corr[lower.tri(corr,diag=TRUE)] <- NA 
+  corr[corr == 1] <- NA 
+  corr <- as.data.frame(as.table(corr))
+  corr <- na.omit(corr) 
+  corr <- subset(corr, abs(Freq) > sig) 
+  corr <- corr[order(-abs(corr$Freq)),] 
+
+  #print(corr)
+  mtx_corr <- reshape2::acast(corr, Var1~Var2, value.var="Freq")
+  corrplot::corrplot(mtx_corr, is.corr=FALSE, tl.col="black", na.label=" ")
+}
+```
+
+There are a lot of variables in the dataset, so we visualize only the most important ones:
+
+```{r}
+df_train %>% 
+  select(!c(id, original)) %>% 
+  corr_simple()
+```
+
+Urea and osmo are fairly correlated and have similar marginal relationships with the target 
+
+## Variable importance
+
+### Only main effects
+
+```{r}
+rerun_main <- FALSE # In this case, the models runs extremely fast because the dataset is so small, however, this is best practice
+
+if (rerun_main) {
+  rf_fit_main <-
+    rand_forest() %>%
+    set_mode("classification") %>%
+    set_engine(
+      "ranger",
+      importance = "impurity"
+    ) %>%
+    fit(
+      formula = prognosis ~ .,
+      data = df_train %>% select(!c(id, original))
+    )
+  
+  rf_var_imp_main <- 
+      rf_fit_main %>%
+      vi()
+  
+  save( # caching does not really work for som reason
+    rf_var_imp_main,
+    file = here("Output/02_featImp_main.RData")
+  )
+  
+}
+
+```
+
+```{r}
+#| fig-height: 8
+
+load(here("Output/02_featImp_main.RData"))
+
+rf_var_imp_main %>%
+  vip(num_features = 60)
+
+```
+
+
+### With interaction features
+
+```{r}
+#| cache: true
+
+# -- Include "brute force" interaction terms
+
+rerun_int <- FALSE
+
+if (rerun_int) {
+  rf_rec_int <- 
+    recipe(
+      formula = prognosis ~ .,
+      data = df_train %>% select(!c(id, original))
+    ) %>% 
+    step_interact(
+      terms = ~ all_predictors():all_predictors()
+    )
+  
+  rf_spec_int <- 
+    rand_forest() %>% 
+    set_mode("classification") %>% 
+    set_engine(
+      "ranger",
+      importance = "impurity"
+    )
+  
+  rf_wflow_int <- 
+    workflow() %>% 
+    add_recipe(rf_rec_int) %>% 
+    add_model(rf_spec_int)
+  
+  rf_fit_int <- 
+    rf_wflow_int %>% 
+    fit(df_train %>% select(!id))
+  
+  rf_var_imp <- 
+      rf_fit_int %>%
+      extract_fit_parsnip() %>% 
+      vi()
+  
+  save(
+    rf_var_imp,
+    file = here("Output/02_featImp_int.RData")
+  )
+  
+}
+
+```
+
+```{r}
+#| cache: true
+#| fig-height: 11
+
+load(here("Output/02_featImp_int.RData"))
+
+rf_var_imp %>%
+  vip(num_features = 50)
+
+```
+

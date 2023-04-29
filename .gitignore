@@ -37,3 +37,10 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# -- My additions
+
+# Data and Output Folder
+
+Data/
+Output/

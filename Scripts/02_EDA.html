@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>EDA</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="02_EDA_files/libs/clipboard/clipboard.min.js"></script>
+<script src="02_EDA_files/libs/quarto-html/quarto.js"></script>
+<script src="02_EDA_files/libs/quarto-html/popper.min.js"></script>
+<script src="02_EDA_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="02_EDA_files/libs/quarto-html/anchor.min.js"></script>
+<link href="02_EDA_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="02_EDA_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="02_EDA_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="02_EDA_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="02_EDA_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">EDA</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here) <span class="co"># avoid having to change between . and .. when running interactively vs knitting</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DataExplorer)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vip)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjmisc) <span class="co"># for rotate_df</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="02_EDA_cache/html/load_data_b6778b3d117d020d1ae979d9169f454e">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">here</span>(<span class="st">"Output/01_output.RData"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Use only training data for the EDA and set switch determining whether to do EDA for original or synthetic data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>switch_original <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (switch_original) {</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  df_train <span class="ot">&lt;-</span> output_01<span class="sc">$</span>df_train_org</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  df_train <span class="ot">&lt;-</span> <span class="fu">training</span>(output_01<span class="sc">$</span>data_split)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(df_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       id         sudden_fever       headache       mouth_bleed    
+ Min.   :  0.0   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:176.0   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
+ Median :359.0   Median :1.0000   Median :0.0000   Median :0.0000  
+ Mean   :353.2   Mean   :0.5186   Mean   :0.4619   Mean   :0.4708  
+ 3rd Qu.:526.0   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+ Max.   :706.0   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+                                                                   
+   nose_bleed      muscle_pain       joint_pain        vomiting     
+ Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
+ Median :0.0000   Median :1.0000   Median :0.0000   Median :0.0000  
+ Mean   :0.4867   Mean   :0.5274   Mean   :0.4549   Mean   :0.4319  
+ 3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+ Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+                                                                    
+      rash          diarrhea       hypotension     pleural_effusion
+ Min.   :0.000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
+ Median :0.000   Median :0.0000   Median :0.0000   Median :0.0000  
+ Mean   :0.492   Mean   :0.4035   Mean   :0.4142   Mean   :0.3841  
+ 3rd Qu.:1.000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+ Max.   :1.000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+                                                                   
+    ascites       gastro_bleeding     swelling          nausea     
+ Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.000  
+ 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000  
+ Median :0.0000   Median :0.0000   Median :0.0000   Median :0.000  
+ Mean   :0.3752   Mean   :0.3717   Mean   :0.3274   Mean   :0.377  
+ 3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.000  
+ Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.000  
+                                                                   
+     chills       myalgia       digestion_trouble    fatigue      
+ Min.   :0.0   Min.   :0.0000   Min.   :0.0000    Min.   :0.0000  
+ 1st Qu.:0.0   1st Qu.:0.0000   1st Qu.:0.0000    1st Qu.:0.0000  
+ Median :0.0   Median :0.0000   Median :0.0000    Median :0.0000  
+ Mean   :0.4   Mean   :0.3646   Mean   :0.3699    Mean   :0.3292  
+ 3rd Qu.:1.0   3rd Qu.:1.0000   3rd Qu.:1.0000    3rd Qu.:1.0000  
+ Max.   :1.0   Max.   :1.0000   Max.   :1.0000    Max.   :1.0000  
+                                                                  
+  skin_lesions     stomach_pain     orbital_pain      neck_pain     
+ Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
+ Median :0.0000   Median :0.0000   Median :0.0000   Median :0.0000  
+ Mean   :0.3221   Mean   :0.3469   Mean   :0.3204   Mean   :0.3752  
+ 3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+ Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+                                                                    
+    weakness        back_pain       weight_loss       gum_bleed     
+ Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
+ Median :0.0000   Median :0.0000   Median :0.0000   Median :0.0000  
+ Mean   :0.4124   Mean   :0.4088   Mean   :0.3717   Mean   :0.3345  
+ 3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+ Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+                                                                    
+    jaundice           coma           diziness       inflammation  
+ Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.000  
+ 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000  
+ Median :0.0000   Median :0.0000   Median :0.0000   Median :0.000  
+ Mean   :0.3504   Mean   :0.4018   Mean   :0.3628   Mean   :0.315  
+ 3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.000  
+ Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.000  
+                                                                   
+    red_eyes      loss_of_appetite urination_loss   slow_heart_rate 
+ Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
+ Median :0.0000   Median :0.0000   Median :0.0000   Median :0.0000  
+ Mean   :0.3717   Mean   :0.4407   Mean   :0.4372   Mean   :0.4018  
+ 3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+ Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+                                                                    
+ abdominal_pain   light_sensitivity  yellow_skin      yellow_eyes    
+ Min.   :0.0000   Min.   :0.0000    Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.0000   1st Qu.:0.0000    1st Qu.:0.0000   1st Qu.:0.0000  
+ Median :0.0000   Median :0.0000    Median :0.0000   Median :0.0000  
+ Mean   :0.4425   Mean   :0.4673    Mean   :0.4726   Mean   :0.4177  
+ 3rd Qu.:1.0000   3rd Qu.:1.0000    3rd Qu.:1.0000   3rd Qu.:1.0000  
+ Max.   :1.0000   Max.   :1.0000    Max.   :1.0000   Max.   :1.0000  
+                                                                     
+ facial_distortion  microcephaly       rigor        bitter_tongue   
+ Min.   :0.0000    Min.   :0.000   Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.0000    1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.0000  
+ Median :0.0000    Median :0.000   Median :0.0000   Median :0.0000  
+ Mean   :0.3628    Mean   :0.269   Mean   :0.2212   Mean   :0.2496  
+ 3rd Qu.:1.0000    3rd Qu.:1.000   3rd Qu.:0.0000   3rd Qu.:0.0000  
+ Max.   :1.0000    Max.   :1.000   Max.   :1.0000   Max.   :1.0000  
+                                                                    
+   convulsion         anemia       cocacola_urine    hypoglycemia   
+ Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
+ Median :0.0000   Median :0.0000   Median :0.0000   Median :0.0000  
+ Mean   :0.2319   Mean   :0.2319   Mean   :0.2655   Mean   :0.2248  
+ 3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:0.0000  
+ Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+                                                                    
+  prostraction     hyperpyrexia      stiff_neck     irritability
+ Min.   :0.0000   Min.   :0.0000   Min.   :0.000   Min.   :0.0  
+ 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:0.0  
+ Median :0.0000   Median :0.0000   Median :0.000   Median :0.0  
+ Mean   :0.2336   Mean   :0.2088   Mean   :0.131   Mean   :0.2  
+ 3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:0.000   3rd Qu.:0.0  
+ Max.   :1.0000   Max.   :1.0000   Max.   :1.000   Max.   :1.0  
+                                                                
+   confusion         tremor         paralysis      lymph_swells   
+ Min.   :0.000   Min.   :0.0000   Min.   :0.000   Min.   :0.0000  
+ 1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:0.0000  
+ Median :0.000   Median :0.0000   Median :0.000   Median :0.0000  
+ Mean   :0.177   Mean   :0.2053   Mean   :0.177   Mean   :0.1575  
+ 3rd Qu.:0.000   3rd Qu.:0.0000   3rd Qu.:0.000   3rd Qu.:0.0000  
+ Max.   :1.000   Max.   :1.0000   Max.   :1.000   Max.   :1.0000  
+                                                                  
+ breathing_restriction toe_inflammation  finger_inflammation lips_irritation  
+ Min.   :0.00000       Min.   :0.00000   Min.   :0.00000     Min.   :0.00000  
+ 1st Qu.:0.00000       1st Qu.:0.00000   1st Qu.:0.00000     1st Qu.:0.00000  
+ Median :0.00000       Median :0.00000   Median :0.00000     Median :0.00000  
+ Mean   :0.07257       Mean   :0.09735   Mean   :0.07965     Mean   :0.08496  
+ 3rd Qu.:0.00000       3rd Qu.:0.00000   3rd Qu.:0.00000     3rd Qu.:0.00000  
+ Max.   :1.00000       Max.   :1.00000   Max.   :1.00000     Max.   :1.00000  
+                                                                              
+   itchiness          ulcers        toenail_loss    speech_problem   
+ Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.00000  
+ 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.00000  
+ Median :0.0000   Median :0.0000   Median :0.0000   Median :0.00000  
+ Mean   :0.1593   Mean   :0.1434   Mean   :0.1416   Mean   :0.03363  
+ 3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:0.00000  
+ Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.00000  
+                                                                     
+ bullseye_rash                     prognosis      original
+ Min.   :0.00000   West_Nile_fever      : 68   Min.   :0  
+ 1st Qu.:0.00000   Japanese_encephalitis: 65   1st Qu.:0  
+ Median :0.00000   Rift_Valley_fever    : 56   Median :0  
+ Mean   :0.03186   Tungiasis            : 55   Mean   :0  
+ 3rd Qu.:0.00000   Chikungunya          : 55   3rd Qu.:0  
+ Max.   :1.00000   Yellow_Fever         : 51   Max.   :0  
+                   (Other)              :215              </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df_train <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(prognosis)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                prognosis  n
+ 1:          Lyme_disease 42
+ 2:             Tungiasis 55
+ 3:                  Zika 46
+ 4:     Rift_Valley_fever 56
+ 5:       West_Nile_fever 68
+ 6:               Malaria 36
+ 7:           Chikungunya 55
+ 8:                Plague 41
+ 9:                Dengue 50
+10:          Yellow_Fever 51
+11: Japanese_encephalitis 65</code></pre>
+</div>
+</div>
+<p>A very straight forward data set. Fortunately, no missing values. The classes are fairly balanced as well.</p>
+</section>
+<section id="marginal-distributions" class="level2">
+<h2 class="anchored" data-anchor-id="marginal-distributions">Marginal Distributions</h2>
+<p>Only indicator predictors (and a lot of them), so we will refrain form plotting.</p>
+<section id="distributions-by-target" class="level3">
+<h3 class="anchored" data-anchor-id="distributions-by-target">Distributions by target</h3>
+<p>No plotting for the same reason as above. Instead, we will do a count by prognosis:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df_train <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">c</span>(id, original)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    prognosis</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">where</span>(is.integer), sum)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> <span class="fu">rotate_df</span>(<span class="at">cn =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      Lyme_disease Tungiasis Zika Rift_Valley_fever
+sudden_fever                    33        16   26                24
+headache                        23        20   13                22
+mouth_bleed                     27        13   15                31
+nose_bleed                      29        11   17                22
+muscle_pain                     27        20   26                22
+joint_pain                      27        18   17                25
+vomiting                        22        17   19                25
+rash                            25        16   25                23
+diarrhea                        29        13   14                22
+hypotension                     31        13   19                26
+pleural_effusion                24        11   18                21
+ascites                         24        12   16                24
+gastro_bleeding                 22         9   16                21
+swelling                        26        10   15                15
+nausea                          28        10   10                17
+chills                          32        11   17                15
+myalgia                         32        10   14                18
+digestion_trouble               30        12   20                20
+fatigue                         26         8   17                13
+skin_lesions                    29        10   17                18
+stomach_pain                    30        10   19                22
+orbital_pain                    30        10   15                13
+neck_pain                       31         8   19                21
+weakness                        34         7   26                24
+back_pain                       33        11   20                20
+weight_loss                     33         4   23                17
+gum_bleed                       28        10   19                17
+jaundice                        35        10   19                16
+coma                            28        16   28                23
+diziness                        28         6   26                18
+inflammation                    32         5   17                 9
+red_eyes                        28         9   24                14
+loss_of_appetite                28        13   33                16
+urination_loss                  29        15   29                14
+slow_heart_rate                 23        13   30                12
+abdominal_pain                  29        10   30                12
+light_sensitivity               31        10   34                18
+yellow_skin                     31        13   28                14
+yellow_eyes                     25        10   30                13
+facial_distortion               29        16   21                11
+microcephaly                    22         6   19                 5
+rigor                           19         5   11                 8
+bitter_tongue                   28         9    3                11
+convulsion                      26         6    4                12
+anemia                          22         7    6                11
+cocacola_urine                  24        12    5                10
+hypoglycemia                    21         8   13                10
+prostraction                    25         4   10                 9
+hyperpyrexia                    20        14    6                18
+stiff_neck                      16         2    3                 4
+irritability                    18         8    3                17
+confusion                       23         9    4                 8
+tremor                          22         9    3                14
+paralysis                       20         4    3                14
+lymph_swells                    21         6    1                 7
+breathing_restriction           14         5    2                 1
+toe_inflammation                15         3    4                 7
+finger_inflammation             15         5    3                 0
+lips_irritation                 15         3    3                 1
+itchiness                        7        33    1                17
+ulcers                           1        33    0                17
+toenail_loss                     5        36    0                12
+speech_problem                   7         2    2                 2
+bullseye_rash                    7         1    1                 3
+                      West_Nile_fever Malaria Chikungunya Plague Dengue
+sudden_fever                       37      24          32     21     23
+headache                           33      21          31     20     21
+mouth_bleed                        38      23          30     16     28
+nose_bleed                         41      21          38     19     31
+muscle_pain                        43      19          32     27     24
+joint_pain                         20      27          30     18     31
+vomiting                           24      21          30     16     23
+rash                               24      25          37     21     28
+diarrhea                           28      26          19     18     22
+hypotension                        36      19           6     21     22
+pleural_effusion                   36      26           6     18     17
+ascites                            30      23           1     22     14
+gastro_bleeding                    29      18           8     24     12
+swelling                           27      18           6     22      8
+nausea                             19      20          29     17     21
+chills                             38      21          15     15     17
+myalgia                            30      18           5     20     13
+digestion_trouble                  21      19           5     24     13
+fatigue                            24      14           6     18     15
+skin_lesions                       25      19           2     15      8
+stomach_pain                       33      21           0     20      8
+orbital_pain                       24      17           3     19     11
+neck_pain                          36      22           3     18     16
+weakness                           36      18           3     22      9
+back_pain                          38      22           4     23     12
+weight_loss                        31      18           5     16     16
+gum_bleed                          26      21           4     14      8
+jaundice                           34      20           1     21      9
+coma                               26      22           3     21      9
+diziness                           29      24           2     19     11
+inflammation                       24      15           4     20      8
+red_eyes                           29      19           5     19      9
+loss_of_appetite                   30      21           4     30      8
+urination_loss                     32      21           3     28     11
+slow_heart_rate                    31      22           4     27      7
+abdominal_pain                     30      26           4     30     10
+light_sensitivity                  38      23           3     31      9
+yellow_skin                        37      23           4     33      5
+yellow_eyes                        31      20           5     27      3
+facial_distortion                  29      25           2     22      8
+microcephaly                       22      21           2     16      1
+rigor                              14      21           2     10      9
+bitter_tongue                      19      21           1     14      7
+convulsion                         19      20           1     15      4
+anemia                             17      21           1     11      8
+cocacola_urine                     23      22           2     13     15
+hypoglycemia                       16      19           1     15      8
+prostraction                       18      19           1     14      4
+hyperpyrexia                       14       5           1      8     10
+stiff_neck                         17       5           0      5      3
+irritability                       21       3           0     11      3
+confusion                          20       5           0      8      4
+tremor                             20       4           1     10      8
+paralysis                          20       6           0      5      3
+lymph_swells                       14       5           0      4     11
+breathing_restriction               7       4           0      3      1
+toe_inflammation                   10       4           0      4      3
+finger_inflammation                 8       4           0      3      2
+lips_irritation                     6       4           0      4      5
+itchiness                           8       0           0      1     14
+ulcers                              8       0           0      1     13
+toenail_loss                        8       0           0      1     11
+speech_problem                      2       0           0      2      2
+bullseye_rash                       2       0           0      1      3
+                      Yellow_Fever Japanese_encephalitis
+sudden_fever                    24                    33
+headache                        28                    29
+mouth_bleed                     19                    26
+nose_bleed                      20                    26
+muscle_pain                     30                    28
+joint_pain                      20                    24
+vomiting                        25                    22
+rash                            26                    28
+diarrhea                        16                    21
+hypotension                     18                    23
+pleural_effusion                15                    25
+ascites                         16                    30
+gastro_bleeding                 22                    29
+swelling                        16                    22
+nausea                          19                    23
+chills                          19                    26
+myalgia                         16                    30
+digestion_trouble               25                    20
+fatigue                         13                    32
+skin_lesions                    15                    24
+stomach_pain                    13                    20
+orbital_pain                    15                    24
+neck_pain                       20                    18
+weakness                        26                    28
+back_pain                       23                    25
+weight_loss                     21                    26
+gum_bleed                       20                    22
+jaundice                        12                    21
+coma                            20                    31
+diziness                        21                    21
+inflammation                    21                    23
+red_eyes                        24                    30
+loss_of_appetite                38                    28
+urination_loss                  38                    27
+slow_heart_rate                 34                    24
+abdominal_pain                  37                    32
+light_sensitivity               33                    34
+yellow_skin                     37                    42
+yellow_eyes                     37                    35
+facial_distortion               20                    22
+microcephaly                    21                    17
+rigor                            8                    18
+bitter_tongue                    7                    21
+convulsion                       8                    16
+anemia                           8                    19
+cocacola_urine                   8                    16
+hypoglycemia                     9                     7
+prostraction                    11                    17
+hyperpyrexia                     6                    16
+stiff_neck                       7                    12
+irritability                     8                    21
+confusion                        6                    13
+tremor                           7                    18
+paralysis                        8                    17
+lymph_swells                     6                    14
+breathing_restriction            1                     3
+toe_inflammation                 1                     4
+finger_inflammation              1                     4
+lips_irritation                  1                     6
+itchiness                        1                     8
+ulcers                           1                     7
+toenail_loss                     1                     6
+speech_problem                   0                     0
+bullseye_rash                    0                     0</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="correlation" class="level2">
+<h2 class="anchored" data-anchor-id="correlation">Correlation</h2>
+<p>There are a lot of variables in the dataset, so we visualize only the most important ones:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>df_train <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">!</span><span class="fu">c</span>(id, original)) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">corr_simple</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02_EDA_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Urea and osmo are fairly correlated and have similar marginal relationships with the target</p>
+</section>
+<section id="variable-importance" class="level2">
+<h2 class="anchored" data-anchor-id="variable-importance">Variable importance</h2>
+<section id="only-main-effects" class="level3">
+<h3 class="anchored" data-anchor-id="only-main-effects">Only main effects</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>rerun_main <span class="ot">&lt;-</span> <span class="cn">FALSE</span> <span class="co"># In this case, the models runs extremely fast because the dataset is so small, however, this is best practice</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (rerun_main) {</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  rf_fit_main <span class="ot">&lt;-</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rand_forest</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_engine</span>(</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>      <span class="st">"ranger"</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">importance =</span> <span class="st">"impurity"</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fit</span>(</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">formula =</span> prognosis <span class="sc">~</span> .,</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> df_train <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">!</span><span class="fu">c</span>(id, original))</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  rf_var_imp_main <span class="ot">&lt;-</span> </span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>      rf_fit_main <span class="sc">%&gt;%</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">vi</span>()</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>( <span class="co"># caching does not really work for som reason</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    rf_var_imp_main,</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">file =</span> <span class="fu">here</span>(<span class="st">"Output/02_featImp_main.RData"</span>)</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">here</span>(<span class="st">"Output/02_featImp_main.RData"</span>))</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>rf_var_imp_main <span class="sc">%&gt;%</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vip</span>(<span class="at">num_features =</span> <span class="dv">60</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02_EDA_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="with-interaction-features" class="level3">
+<h3 class="anchored" data-anchor-id="with-interaction-features">With interaction features</h3>
+<div class="cell" data-hash="02_EDA_cache/html/unnamed-chunk-10_13823d1e7e2cb579d2161bb92e203e22">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># -- Include "brute force" interaction terms</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>rerun_int <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (rerun_int) {</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  rf_rec_int <span class="ot">&lt;-</span> </span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">recipe</span>(</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">formula =</span> prognosis <span class="sc">~</span> .,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> df_train <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">!</span><span class="fu">c</span>(id, original))</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_interact</span>(</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">terms =</span> <span class="sc">~</span> <span class="fu">all_predictors</span>()<span class="sc">:</span><span class="fu">all_predictors</span>()</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  rf_spec_int <span class="ot">&lt;-</span> </span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rand_forest</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_engine</span>(</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>      <span class="st">"ranger"</span>,</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">importance =</span> <span class="st">"impurity"</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>  rf_wflow_int <span class="ot">&lt;-</span> </span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_recipe</span>(rf_rec_int) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_model</span>(rf_spec_int)</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>  rf_fit_int <span class="ot">&lt;-</span> </span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>    rf_wflow_int <span class="sc">%&gt;%</span> </span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fit</span>(df_train <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">!</span>id))</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>  rf_var_imp <span class="ot">&lt;-</span> </span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>      rf_fit_int <span class="sc">%&gt;%</span></span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>      <span class="fu">extract_fit_parsnip</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>      <span class="fu">vi</span>()</span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>    rf_var_imp,</span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">file =</span> <span class="fu">here</span>(<span class="st">"Output/02_featImp_int.RData"</span>)</span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="02_EDA_cache/html/unnamed-chunk-11_a05ddc0d5129a227fd176b155b5c73cf">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">here</span>(<span class="st">"Output/02_featImp_int.RData"</span>))</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>rf_var_imp <span class="sc">%&gt;%</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vip</span>(<span class="at">num_features =</span> <span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02_EDA_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
